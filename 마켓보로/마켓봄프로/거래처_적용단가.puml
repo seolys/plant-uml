@@ -1,0 +1,20 @@
+@startuml
+title [주문전용 상품찾기 팝업] 거래처의 적용단가
+
+start
+if (**거래처의 단가적용법**) then (등급단가)
+  label sp_lab0
+  label sp_lab1
+  label lab
+  #AntiqueWhite:적용단가: 상품의 등급단가\n(거래처의 적용등급에 해당하는 상품단가);
+  detach
+else (거래처별 특단가)
+  if (**거래처별 특단가가 등록되어있는가?**) then (No)
+  label sp_lab2
+  goto lab
+  else (Yes)
+  #AntiqueWhite:적용단가: 거래처별 특단가;
+  detach
+endif
+
+@enduml
