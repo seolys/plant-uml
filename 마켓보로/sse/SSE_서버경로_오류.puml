@@ -1,0 +1,35 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+autonumber
+participant API서버
+participant 프론트
+participant SSE서버
+actor 개발자
+
+note over SSE서버: **원인: SSE 연결이 SSE서버로 요청되어야 하는데**\n**URL 매핑이 잘못되어서 API서버로 요청됨.**
+loop
+  API서버 <- 프론트: SSE 연결 요청
+  API서버 -> 프론트: 나 SSE 모름. 오류응답(403)
+end
+
+SSE서버 -> SSE서버: ...그냥 잘 살아있음...\nDatadog에 생존로그 잘 기록중
+group SSE 서버 생존확인
+개발자 -> SSE서버: 로그확인. 잘 살아있음.
+개발자 -> SSE서버: Health Check. \n응답값이 이상함.(QA,PROD와 다름).
+note over 개발자: **인프라 문제로 의심되어 지웅님께 요청**\n**(과거버전으로 동작되고있는것이 아닌지 의심)**
+개발자 -> SSE서버: AWS 관리콘솔 확인. 문제없어보임.
+end
+
+group SSE 연결 테스트
+개발자 -> SSE서버: SSE 수동 연결시 오류발생(403)\nDatadog에 로그는 안남음
+개발자 -> SSE서버: 안되네
+개발자 -> SSE서버: 왜안되지
+개발자 -> SSE서버: 아,,모르겠다..
+end
+
+note over SSE서버: **해결: 추가 힌트 발견하여 원인 확인**\n**URL 매핑변경 후 정상확인**
+loop
+  SSE서버 <- 프론트: SSE 연결 요청
+  SSE서버 -> 프론트: 정상연결
+end
+@enduml
