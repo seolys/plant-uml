@@ -9,18 +9,18 @@ actor 개발자
 note over SSE서버: **원인: SSE 연결이 SSE서버로 요청되어야 하는데**\n**URL 매핑이 잘못되어서 API서버로 요청됨.**
 loop
   API서버 <- 프론트: SSE 연결 요청
-  API서버 -> 프론트: 나 SSE 모름. 오류응답(403)
+  API서버 -> 프론트: **나 SSE 모름. 오류응답(403)**\n**(403: API서버 인증 실패)**
 end
 
 SSE서버 -> SSE서버: ...그냥 잘 살아있음...\nDatadog에 생존로그 잘 기록중
-group SSE 서버 생존확인
-개발자 -> SSE서버: 로그확인. 잘 살아있음.
-개발자 -> SSE서버: Health Check. \n응답값이 이상함.(QA,PROD와 다름).
-note over 개발자: **인프라 문제로 의심되어 지웅님께 요청**\n**(과거버전으로 동작되고있는것이 아닌지 의심)**
+group SSE 서버 생존체크
+개발자 -> SSE서버: [로그확인] 잘 살아있음.
+개발자 -> SSE서버: [Health Check] \n**응답값이 이상함.(QA,PROD와 다름)**.
+note over 개발자: **인프라 문제로 의심되어 지웅님께 요청**\n**(STAGE환경 서버 롤백 의심)**
 개발자 -> SSE서버: AWS 관리콘솔 확인. 문제없어보임.
 end
 
-group SSE 연결 테스트
+group SSE 연결 테스트(증상 재현)
 개발자 -> SSE서버: SSE 수동 연결시 오류발생(403)\nDatadog에 로그는 안남음
 개발자 -> SSE서버: 안되네
 개발자 -> SSE서버: 왜안되지

@@ -1,0 +1,35 @@
+@startuml
+
+title [서비스(이용료/SMS) 결제 환불] 오류상황
+'https://plantuml.com/sequence-diagram
+autonumber
+
+actor FA실
+participant 정산관리자
+participant MQ
+participant 마켓봄
+actor 고객_또는_운영팀_추정
+
+FA실 -> 정산관리자: 환불 등록
+
+activate 정산관리자
+정산관리자 -> 정산관리자: 환불처리
+정산관리자 -> MQ: 환불 메시지 발행
+deactivate 정산관리자
+
+MQ -> 마켓봄: 환불 메시지 수신
+activate 마켓봄
+마켓봄 -> 마켓봄: **환불처리(확인필요)**
+deactivate 마켓봄
+note over 마켓봄: **환불 프로세스 종료(추정)**
+...  ...
+
+autonumber
+고객_또는_운영팀_추정 -> 마켓봄: **결제취소(추정)**
+마켓봄 -> MQ: **결제 취소 메시지 발행**
+
+정산관리자 <- MQ: **결제 취소 메시지 수신**
+activate 정산관리자
+정산관리자 -> 정산관리자: **결제 취소하려는데**\n**환불등록 되어있어서 슬랙알림**
+
+@enduml

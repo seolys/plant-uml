@@ -1,0 +1,24 @@
+@startuml
+
+title [서비스(이용료/SMS) 결제 환불] 최초 설계
+'https://plantuml.com/sequence-diagram
+autonumber
+
+actor FA실
+participant 정산관리자
+participant MQ
+participant 마켓봄
+
+
+FA실 -> 정산관리자: 환불 등록
+note left : **FA실 환불 등록만으로**\n**각 서비스 결제취소까지 처리**
+
+activate 정산관리자
+정산관리자 -> 정산관리자: 환불처리
+정산관리자 -> MQ: 환불 메시지 발행
+deactivate 정산관리자
+
+MQ -> 마켓봄: 환불 메시지 수신
+activate 마켓봄
+마켓봄 -> 마켓봄: 환불처리\n(**결제취소 처리**)
+@enduml
